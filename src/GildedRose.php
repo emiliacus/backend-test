@@ -11,6 +11,28 @@ class GildedRose {
     private $items;
 
     /**
+    * String const var
+    *
+    * @var string
+    */
+    const AGED = 'Aged Brie';
+
+    /**
+    * String const var
+    *
+    * @var string
+    */
+    const BACKSTAGE = 'Backstage passes to a TAFKAL80ETC concert';
+
+    /**
+    * String const var
+    *
+    * @var string
+    */
+    const SULFURAS = 'Sulfuras, Hand of Ragnaros';
+
+
+    /**
     * GildeRose constructor
     *
     * @param Item[] $items
@@ -27,50 +49,47 @@ class GildedRose {
     function update_quality() {
         /* @var $items Item[] */
         foreach ( $this->items as $item ) {
-            if ( $item->name != 'Aged Brie' and $item->name != 'Backstage passes to a TAFKAL80ETC concert' ) {
-                if ( $item->quality > 0 ) {
-                    if ( $item->name != 'Sulfuras, Hand of Ragnaros' ) {
-                        $item->quality = $item->quality - 1;
-                    }
-                }
-            } else {
-                if ( $item->quality < 50 ) {
-                    $item->quality = $item->quality + 1;
-                    if ( $item->name == 'Backstage passes to a TAFKAL80ETC concert' ) {
-                        if ( $item->sell_in < 11 ) {
-                            if ( $item->quality < 50 ) {
-                                $item->quality = $item->quality + 1;
-                            }
-                        }
-                        if ( $item->sell_in < 6 ) {
-                            if ( $item->quality < 50 ) {
-                                $item->quality = $item->quality + 1;
-                            }
-                        }
-                    }
-                }
-            }
 
-            if ( $item->name != 'Sulfuras, Hand of Ragnaros' ) {
-                $item->sell_in = $item->sell_in - 1;
-            }
-
-            if ( $item->sell_in < 0 ) {
-                if ( $item->name != 'Aged Brie' ) {
-                    if ( $item->name != 'Backstage passes to a TAFKAL80ETC concert' ) {
-                        if ( $item->quality > 0 ) {
-                            if ( $item->name != 'Sulfuras, Hand of Ragnaros' ) {
-                                $item->quality = $item->quality - 1;
-                            }
-                        }
-                    } else {
-                        $item->quality = $item->quality - $item->quality;
-                    }
-                } else {
-                    if ( $item->quality < 50 ) {
+            switch ($item->name){
+                case self::AGED:
+                    if ( $item->quality < 50 ){
                         $item->quality = $item->quality + 1;
                     }
-                }
+                    $item->sell_in = $item->sell_in - 1;
+                    if ( $item->sell_in < 0 ) {
+                        if ( $item->quality < 50 ) {
+                            $item->quality = $item->quality + 1;
+                        }                        
+                    }
+                    break;
+                case self::BACKSTAGE:
+                    if ( $item->quality < 50 ){
+                        $item->quality = $item->quality + 1;
+                        if ( $item->sell_in < 11 ) {
+                            $item->quality = $item->quality + 1;
+                        }
+                        if ( $item->sell_in < 6 ) {
+                            $item->quality = $item->quality + 1;
+                        }
+                        $item->sell_in = $item->sell_in - 1;
+                        if ( $item->sell_in < 0 ) {
+                            $item->quality = $item->quality - $item->quality;                            
+                        }                    
+                    }
+                    break;
+                case self::SULFURAS:
+                    break;
+
+                default:
+                    if ( $item->quality > 0 ) {
+                        $item->quality = $item->quality - 1;
+                    }                
+                    $item->sell_in = $item->sell_in - 1;
+                    if ( $item->sell_in < 0 ) {
+                        if ( $item->quality > 0 ) {
+                                $item->quality = $item->quality - 1;
+                        }
+                    }
             }
         }
     }
